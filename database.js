@@ -14,4 +14,19 @@ const firebaseConfig = {
   firebaseConfig.initializeApp(firebaseConfig);
   
   //reference your database
+ var loginFormDB = firebase.database().ref('health care chat bot');
+
+ document.getElementById('Login-form').addEventListener('submit',submitForm);
+
+ function submitForm(e){
+    e.preventDefault();
+
+    var email = getElementVal('email');
+    var password = getElementVal('password');
+
+    console.log(email, password);
+ }
+const getElementVal = (id) => {
+    return document.getElementById(id).value;
+}
   
