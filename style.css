@@ -32,7 +32,7 @@ header nav{
     font-size: 26px;
 }
 header nav a{
-    color: pink;
+    color: rgb(204, 28, 72);
     text-decoration: none;
     position: relative;
 }
@@ -52,8 +52,8 @@ header nav a:hover::before{
 }
 .Form-box {
     position: fixed;
-    right: 0;
-    bottom: 0;
+    right: 0px;
+    bottom: 0px;
     width: 400px;
     height: 450px;
     backdrop-filter: blur(40px);
@@ -90,7 +90,7 @@ height: 100%;
 }
 
 .Register-form .input-box{
-    margin: 10px 0px;
+    margin: 4px 7px;
 }
 .input-box input{
     width: 40%;
@@ -143,3 +143,8 @@ height: 100%;
 .change-form .Register-form{
     transform: translateX(0%);
 }
+.Form-box .Register-form {
+    overflow-y: auto; /* Add vertical scrolling */
+    max-height: 465px; /* Set a maximum height for the form */
+}
+
