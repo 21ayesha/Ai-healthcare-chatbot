@@ -11,12 +11,16 @@
         <h1>Healthcare-chatbot</h1>
         <nav>
             <a href="#">Home</a>
-            <a href="#">About</a>
-            <a href="#">Services</a>
-            <a href="#">Login</a>
+            <a href="#">Hospitals</a>
+            <a href="#">Doctors</a>
+            <a href="#">Feedback</a>
+            <a href="#">Logout</a>
         </nav>
     </header>
     <div class="Form-box">
+        <div id="login-success-message" style="display: none; color: green;">
+            Login Successful!
+        </div>
         <form class="Login-form">
             <h1>Login</h1>
             <div class="input-box">
@@ -48,56 +52,51 @@
                 <label>Username</label>
                 <ion-icon name="person-outline"></ion-icon>
             </div>
-	
-	        <div class="input-box">
-                <input type="password" id="password" required>
-                <label>Password</label>
-                <ion-icon name="lock-closed-outline"></ion-icon>
-            </div> 
 
-	        <div class="input-box">
-                <input type="text" id="conf-password" required>
-                <label>Confirm Password</label>
-                <ion-icon name="person-outline"></ion-icon>
+            <div class="input-box">
+                <input type="email" id="register-email"  required>
+                <label>Email</label>
+                <ion-icon name="mail-outline"></ion-icon>
             </div>
 	
+	        <div class="input-box">
+                <input type="password" id="register-password" required>
+                <label>Password</label>
+                <ion-icon name="lock-closed-outline" ></ion-icon>
+            </div> 
+
+	        
 	        <div class="input-box">
                 <input type="text" id="age" required>
                 <label>Age</label>
-                <ion-icon name="lock-closed-outline"></ion-icon>
-            </div>
-
-
-	        <div class="input-box">
-                <input type="text" id="city" required>
-                <label>City</label>
-                <ion-icon name="lock-closed-outline"></ion-icon>
+                <ion-icon name="calendar-outline"></ion-icon>
             </div>
 
 
             <div class="input-box">
                 <input type="text" id="state" required>
                 <label>state</label>
-                <ion-icon name="lock-closed-outline"></ion-icon>
+                <ion-icon name="location-outline"></ion-icon>
             </div>
+
+            <div class="input-box">
+                <input type="text" id="city" required>
+                <label>City</label>
+                <ion-icon name="location-outline"></ion-icon>
+            </div>
+
 
 	        <div class="input-box">
                 <input type="text" id="gender" required>
                 <label>Gender</label>
-                <ion-icon name="lock-closed-outline"></ion-icon>
+                <ion-icon name="male-female-outline"></ion-icon>
             </div>
 
-           
-	        <div class="input-box">
-                <input type="text" id="email" required>
-                <label>Email</label>
-                <ion-icon name="lock-closed-outline"></ion-icon>
-            </div>
-		
+        
 	        <div class="input-box">
                 <input type="text" id="phno" required>
                 <label>Phone NO</label>
-                <ion-icon name="mail-outline"></ion-icon>
+                <ion-icon name="call-outline"></ion-icon>
             </div>
 	
 		 
@@ -113,7 +112,103 @@
 
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-    <script src = "https://cdnjs.cloudflare.com/ajax/libs/firebase/7.14.1-0/firebase.js"></script>
     <script src="script.js"></script>
+
+    <script type="module">
+        
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, set,ref, get, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getAuth, createUserWithEmailAndPassword ,signInWithEmailAndPassword} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        
+        
+        
+        // Your web app's Firebase configuration
+         const firebaseConfig = {
+          apiKey: "AIzaSyDDTL1YbbtTvTlzfl3xF8sl2xvFlOQ83b0",
+          authDomain: "healthcare-chat-bot-2e726.firebaseapp.com",
+          databaseURL: "https://healthcare-chat-bot-2e726-default-rtdb.firebaseio.com",
+          projectId: "healthcare-chat-bot-2e726",
+          storageBucket: "healthcare-chat-bot-2e726.appspot.com",
+          messagingSenderId: "970823655959",
+          appId: "1:970823655959:web:387b836d1610e70991b252"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase();
+        const auth = getAuth(app);
+
+        const RegisterUser = evt => {
+            evt.preventDefault();
+
+            // Get input values from the registration form
+            const username = document.getElementById('Username').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const age = document.getElementById('age').value;
+            const state = document.getElementById('state').value;
+            const city = document.getElementById('city').value;
+            const gender = document.getElementById('gender').value;
+            const phno = document.getElementById('phno').value;
+
+            // Create a new user
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((credentials) => {
+                    console.log(credentials);
+                    const userId = credentials.user.uid;
+
+                    // Store user data in the database
+                    set(ref(db, 'users/' + userId), {
+                        username: username,
+                        age: age,
+                        state: state,
+                        city: city,
+                        gender: gender,
+                        phno: phno
+                    }).then(() => {
+                        console.log('User data stored successfully');
+                        // Display the login success message
+                        document.querySelector('.Login-form').style.display = 'none';
+                        document.getElementById('login-success-message').style.display = 'block';
+                    }).catch((error) => {
+                        console.error('Error storing user data:', error.message);
+                    });
+                })
+                .catch((error) => {
+                    alert(error.message);
+                    console.error('Error creating user:', error.code, error.message);
+                });
+        };
+
+        // Add event listener to the registration form
+        document.querySelector('.Register-form').addEventListener('submit', RegisterUser);
+
+        // Login User function
+        const LoginUser = evt => {
+            evt.preventDefault();
+
+            // Get input values from the login form
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Sign in the user
+            signInWithEmailAndPassword(auth, email, password)
+                .then(() => {
+                    // Hide the login form and show the success message
+                    document.querySelector('.Login-form').style.display = 'none';
+                    document.getElementById('login-success-message').style.display = 'block';
+                    console.log('Login Successful');
+                })
+                .catch((error) => {
+                    alert(error.message);
+                    console.error('Error logging in:', error.code, error.message);
+                });
+        };
+
+        // Add event listener to the login form
+        document.querySelector('.Login-form').addEventListener('submit', LoginUser);
+        
+     </script>
 </body>
 </html>
+
